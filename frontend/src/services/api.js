@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 const API = axios.create({
+ 
   baseURL: 'https://dashboard-x.onrender.com', 
 });
 
