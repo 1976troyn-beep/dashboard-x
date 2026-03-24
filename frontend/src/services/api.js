@@ -2,7 +2,8 @@ import axios from 'axios';
 
 const API = axios.create({
   // Я добавил /api в конец ссылки, чтобы сервер тебя "услышал"
-  baseURL: 'https://dashboard-x-onrender-com.onrender.com/api', 
+ baseURL: 'https://dashboard-x.onrender.com',
+ 
 });
 
 export const getSocialStats = () => API.get('/stats');
