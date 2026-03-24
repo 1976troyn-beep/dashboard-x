@@ -21,3 +21,4 @@ app.get('/', (req, res) => res.send('Бэкенд в облаке активен
 app.listen(PORT, () => {
     console.log(`Сервер запущен на порту ${PORT}`);
 });
+ 
