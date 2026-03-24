@@ -29,7 +29,7 @@ const Analytics = () => {
 
   useEffect(() => {
     // Используем полный URL к API
-    axios.get('https://dashboard-x-onrender-com.onrender.com/api/social-stats')
+    axios.get('https://dashboard-x-onrender-com.onrender.com')
       .then(res => { 
         // Гарантируем, что dbData всегда будет массивом
         const data = Array.isArray(res.data) ? res.data : [];
