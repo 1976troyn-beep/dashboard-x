@@ -1,13 +1,14 @@
 const express = require('express');
 const cors = require('cors');
 const app = express();
+
 const PORT = process.env.PORT || 5000; 
 
-// МАКСИМАЛЬНЫЙ ДОСТУП: разрешаем вашему сайту на Vercel всё
+// Разрешаем всё для Vercel, чтобы не было ошибок CORS
 app.use(cors({
-    origin: '*', 
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+    origin: "*", 
+    methods: ["GET", "POST", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
 app.use(express.json());
@@ -18,28 +19,29 @@ let mockData = [
     { id: 3, platform: 'TikTok', followers: 5400, growth: 25.4, revenue: 300.2 }
 ];
 
+// ОБЯЗАТЕЛЬНО: Маршрут для сохранения данных
 app.post('/api/social-stats', (req, res) => {
     const { platform, followers, growth, revenue } = req.body;
+    console.log("Данные получены:", req.body);
+
     const index = mockData.findIndex(item => item.platform === platform);
     if (index !== -1) {
         mockData[index] = { 
             ...mockData[index], 
-            followers: Number(followers), 
-            growth: Number(growth), 
-            revenue: Number(revenue) 
+            followers: Number(followers) || 0, 
+            growth: Number(growth) || 0, 
+            revenue: Number(revenue) || 0 
         };
-        res.status(200).json({ message: "OK" });
-    } else {
-        res.status(404).json({ message: "Platform not found" });
+        return res.status(200).json({ message: "OK" });
     }
+    res.status(404).json({ message: "Platform not found" });
 });
 
-app.get('/api/social-stats', (req, res) => res.json(mockData));
 app.get('/api/stats', (req, res) => res.json(mockData));
+app.get('/api/social-stats', (req, res) => res.json(mockData));
 
 app.get('/', (req, res) => res.send('Бэкенд активен!'));
 
 app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Сервер запущен на порту ${PORT}`);
+    console.log(`Сервер на порту ${PORT}`);
 });
-
