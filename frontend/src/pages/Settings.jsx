@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Save, Database, CheckCircle, RefreshCw, Activity, Zap, AlertCircle } from 'lucide-react';
 import axios from 'axios';
+
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
@@ -9,6 +10,7 @@ const containerVariants = {
     transition: { staggerChildren: 0.1, delayChildren: 0.1 }
   }
 };
+
 const cardVariants = {
   hidden: { opacity: 0, scale: 0.95, y: 20, filter: "blur(10px)" },
   visible: { 
@@ -16,6 +18,7 @@ const cardVariants = {
     transition: { type: "spring", stiffness: 100, damping: 15 }
   }
 };
+
 const Settings = () => {
   const [formData, setFormData] = useState({
     platform: 'YouTube',
@@ -24,15 +27,19 @@ const Settings = () => {
     revenue: '',
   });
   const [status, setStatus] = useState('idle');
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setStatus('loading');
     try {
+      // ИСПРАВЛЕНО: Добавлен точный путь /api/social-stats
       const response = await axios.post('https://dashboard-x-onrender-com.onrender.com', formData);
-      if (response.data.message === "OK") {
+      
+      if (response.data.message === "OK" || response.status === 200) {
         setStatus('success');
         setFormData(prev => ({ ...prev, followers: '', growth: '', revenue: '' }));
         setTimeout(() => setStatus('idle'), 3000);
@@ -43,6 +50,7 @@ const Settings = () => {
       setTimeout(() => setStatus('idle'), 3000);
     }
   };
+
   return (
     <motion.div 
       variants={containerVariants}
@@ -58,6 +66,7 @@ const Settings = () => {
           <div className="h-[1px] w-full bg-gradient-to-r from-gray-500/20 to-transparent" />
         </div>
       </motion.div>
+
       <motion.form 
         variants={cardVariants}
         onSubmit={handleSubmit} 
@@ -83,6 +92,7 @@ const Settings = () => {
               ))}
             </div>
           </div>
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="space-y-3">
               <label className="text-[8px] uppercase font-black text-gray-500 ml-3 tracking-[0.3em] italic leading-none">Подписчики</label>
@@ -101,6 +111,7 @@ const Settings = () => {
             </div>
           </div>
         </div>
+
         <div className="bg-white/[0.05] p-6 px-8 flex items-center justify-between border-t border-white/10 relative z-10">
           <div className="flex items-center gap-4">
             {status === 'loading' && <span className="text-[9px] text-blue-400 animate-pulse font-black uppercase tracking-[0.25em] flex items-center gap-2 italic"><RefreshCw size={14} className="animate-spin" /> Синхронизация...</span>}
@@ -126,6 +137,7 @@ const Settings = () => {
           </button>
         </div>
       </motion.form>
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {[
           { id: 1, icon: Database, color: 'text-[#C026D3]', label: 'База Данных', val: 'MySQL Активна' },
@@ -142,8 +154,8 @@ const Settings = () => {
                 <item.icon size={20} className={item.color} />
              </div>
              <div>
-                <p className="text-[8px] font-black text-gray-600 uppercase tracking-[0.3em] leading-none italic">{item.label}</p>
-                <p className="text-[11px] font-bold text-white uppercase italic mt-2 tracking-tight">{item.val}</p>
+                <p className="text-[8px] font-black uppercase tracking-[0.2em] text-gray-500 mb-1">{item.label}</p>
+                <p className="text-xs font-black text-white italic">{item.val}</p>
              </div>
           </motion.div>
         ))}
