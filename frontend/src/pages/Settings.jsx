@@ -31,7 +31,7 @@ const Settings = () => {
     e.preventDefault();
     setStatus('loading');
     try {
-      const response = await axios.post('http://localhost:5000/api/social-stats', formData);
+      const response = await axios.post('https://dashboard-x-onrender-com.onrender.com', formData);
       if (response.data.message === "OK") {
         setStatus('success');
         setFormData(prev => ({ ...prev, followers: '', growth: '', revenue: '' }));

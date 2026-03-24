@@ -40,7 +40,8 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    axios.get('http://localhost:5000/api/stats').then(res => { 
+    axios.get('https://dashboard-x-onrender-com.onrender.com')
+    .then(res => { 
       setStats(res.data || []); setLoading(false); 
     }).catch(() => setLoading(false));
   }, []);
