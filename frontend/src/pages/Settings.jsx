@@ -37,7 +37,7 @@ const Settings = () => {
     setStatus('loading');
     try {
       // ИСПРАВЛЕНО: Добавлен точный путь /api/social-stats
-      const response = await axios.post('https://dashboard-x-onrender-com.onrender.com/api/social-stats', formData);
+      const response = await axios.post('https://dashboard-x.onrender.com/api/social-stats', formData);
       
       if (response.data.message === "OK" || response.status === 200) {
         setStatus('success');
