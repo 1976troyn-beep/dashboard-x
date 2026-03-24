@@ -2,10 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 
-// Render сам назначит порт через переменную окружения, либо используем 5000 для локалки
 const PORT = process.env.PORT || 5000; 
 
-// Настройка CORS, которая разрешает доступ твоему сайту на Vercel
 app.use(cors({
     origin: "*", 
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
@@ -14,22 +12,42 @@ app.use(cors({
 
 app.use(express.json());
 
-// Твои тестовые данные (Mock Data)
-const mockData = [
+// Твои данные (теперь это let, чтобы мы могли их менять)
+let mockData = [
     { id: 1, platform: 'Instagram', followers: 1250, growth: 15.2, revenue: 450.5 },
     { id: 2, platform: 'YouTube', followers: 8900, growth: 5.7, revenue: 1200.0 },
     { id: 3, platform: 'TikTok', followers: 5400, growth: 25.4, revenue: 300.2 }
 ];
 
-// Маршруты для получения данных
+// --- НОВЫЙ БЛОК: Приём данных из формы Settings ---
+app.post('/api/social-stats', (req, res) => {
+    const { platform, followers, growth, revenue } = req.body;
+    
+    console.log(`Получены данные для ${platform}:`, req.body);
+
+    // Находим индекс платформы и обновляем данные в памяти сервера
+    const index = mockData.findIndex(item => item.platform === platform);
+    if (index !== -1) {
+        mockData[index] = { 
+            ...mockData[index], 
+            followers: Number(followers), 
+            growth: Number(growth), 
+            revenue: Number(revenue) 
+        };
+        res.status(200).json({ message: "OK" });
+    } else {
+        res.status(404).json({ message: "Platform not found" });
+    }
+});
+// ------------------------------------------------
+
 app.get('/api/social-stats', (req, res) => res.json(mockData));
 app.get('/api/stats', (req, res) => res.json(mockData));
 app.get('/api/analytics', (req, res) => res.json(mockData));
 
-// Главная страница для проверки работоспособности сервера
 app.get('/', (req, res) => res.send('Бэкенд в облаке активен и готов к работе!'));
 
-// Запуск сервера на всех интерфейсах (0.0.0.0 важно для Render)
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`Сервер запущен на порту ${PORT}`);
 });
+
