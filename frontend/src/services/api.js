@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const API = axios.create({
-  baseURL: 'https://dashboard-x.onrender.com', 
+  baseURL: 'https://dashboard-x.onrender.com/api/social-stats', 
 });
 
 export const getSocialStats = () => API.get('/stats');

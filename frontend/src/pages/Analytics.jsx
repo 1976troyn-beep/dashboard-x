@@ -27,7 +27,7 @@ const Analytics = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios.get('https://dashboard-x-onrender-com.onrender.com')
+    axios.get('https://dashboard-x-onrender-com.onrender.com/api/social-stats')
       .then(res => { setDbData(res.data || []); setLoading(false); })
       .catch(() => setLoading(false));
   }, []);

@@ -40,7 +40,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    axios.get('https://dashboard-x-onrender-com.onrender.com')
+    axios.get('https://dashboard-x-onrender-com.onrender.com/api/social-stats')
     .then(res => { 
       setStats(res.data || []); setLoading(false); 
     }).catch(() => setLoading(false));
