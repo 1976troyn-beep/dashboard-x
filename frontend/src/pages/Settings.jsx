@@ -35,9 +35,18 @@ const Settings = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setStatus('loading');
+    
+    // Преобразуем данные в числа для корректной работы графиков
+    const payload = {
+        ...formData,
+        followers: Number(formData.followers),
+        growth: Number(formData.growth),
+        revenue: Number(formData.revenue)
+    };
+
     try {
-      // ИСПРАВЛЕНО: Добавлен точный путь /api/social-stats
-      const response = await axios.post('https://dashboard-x.onrender.com/api/social-stats', formData);
+      // ИСПРАВЛЕНО: Правильный адрес твоего сервера на Render
+      const response = await axios.post('https://dashboard-x.onrender.com', payload);
       
       if (response.data.message === "OK" || response.status === 200) {
         setStatus('success');
@@ -56,7 +65,7 @@ const Settings = () => {
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="space-y-6 pb-10 max-w-[1300px] mx-auto text-white"
+      className="space-y-6 pb-10 max-w-[1300px] mx-auto text-white px-4"
     >
       <motion.div variants={cardVariants} className="flex flex-col mb-8 group px-2">
         <h1 className="text-4xl font-black italic uppercase tracking-tighter leading-none text-white">
@@ -138,9 +147,10 @@ const Settings = () => {
         </div>
       </motion.form>
 
+      {/* НИЖНИЙ БЛОК: СТАТУС СИСТЕМЫ */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {[
-          { id: 1, icon: Database, color: 'text-[#C026D3]', label: 'База Данных', val: 'MySQL Активна' },
+          { id: 1, icon: Database, color: 'text-[#C026D3]', label: 'База Данных', val: 'Облако Активно' },
           { id: 2, icon: Activity, color: 'text-[#06B6D4]', label: 'Задержка', val: 'Отклик 12ms' },
           { id: 3, icon: Zap, color: 'text-[#10B981]', label: 'Статус', val: 'Система готова' }
         ].map((item) => (

@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
-import { motion, animate, AnimatePresence } from 'framer-motion'
+import { motion, animate } from 'framer-motion'
 import { ArrowUpRight, MoreVertical, Loader2, Zap, Share2 } from 'lucide-react'
 import { getSocialStats } from '../services/api'
+
 const Counter = ({ value }) => {
   const [displayValue, setDisplayValue] = useState(0)
   useEffect(() => {
@@ -13,6 +14,7 @@ const Counter = ({ value }) => {
   }, [value])
   return <span>{displayValue.toLocaleString()}</span>
 }
+
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
@@ -23,6 +25,7 @@ const containerVariants = {
     }
   }
 }
+
 const cardVariants = {
   hidden: { 
     opacity: 0, 
@@ -42,6 +45,7 @@ const cardVariants = {
     }
   }
 }
+
 const Platforms = () => {
   const [platforms, setPlatforms] = useState([])
   const [loading, setLoading] = useState(true)
@@ -49,14 +53,17 @@ const Platforms = () => {
   useEffect(() => {
     getSocialStats()
       .then(res => {
-        setPlatforms(Array.isArray(res?.data) ? res.data : [])
+        // Проверяем данные и из res.data, и из самого res (зависит от того, как вернет axios)
+        const data = res?.data || res;
+        setPlatforms(Array.isArray(data) ? data : [])
         setLoading(false)
       })
       .catch(error => {
-        console.error("Ошибка загрузки:", error)
+        console.error("Ошибка загрузки платформ:", error)
         setLoading(false)
       })
   }, [])
+
   const getStyle = (name) => {
     const styles = {
       'YouTube': { icon: '/logos/youtube.svg', color: 'text-red-500', glow: 'bg-red-600/20', border: 'group-hover:border-red-500/40' },
@@ -65,11 +72,14 @@ const Platforms = () => {
     }
     return styles[name] || styles['YouTube']
   }
+
   if (loading) return (
     <div className="h-[60vh] flex flex-col items-center justify-center gap-4">
       <Loader2 className="animate-spin text-[#C026D3]" size={32} />
+      <p className="text-[10px] font-black uppercase tracking-[0.5em] text-white/50 italic">Syncing Assets...</p>
     </div>
   )
+
   return (
     <motion.div 
       variants={containerVariants}
@@ -88,6 +98,7 @@ const Platforms = () => {
           <div className="h-[1px] w-full bg-gradient-to-r from-gray-500/20 to-transparent" />
         </div>
       </motion.div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {platforms.map((p, index) => {
           const style = getStyle(p.platform)
@@ -118,6 +129,7 @@ const Platforms = () => {
                     <MoreVertical size={18} />
                   </button>
                 </div>
+
                 <div className="mt-12">
                   <p className="text-[9px] text-gray-500 uppercase font-black tracking-[0.2em] mb-1 italic opacity-60 flex items-center gap-2">
                      <Zap size={10} className="text-[#C026D3] animate-pulse" /> Current Followers
@@ -132,6 +144,7 @@ const Platforms = () => {
                     </div>
                   </div>
                 </div>
+
                 <div className="mt-10 pt-8 border-t border-white/10 flex justify-between items-end">
                   <div>
                     <p className="text-[8px] text-gray-500 uppercase font-black tracking-[0.3em] mb-1 italic opacity-60 leading-none">Social network income</p>
@@ -158,11 +171,4 @@ const Platforms = () => {
   )
 }
 
-export default Platforms
-
-
-
-
-
-
-
+export default Platforms;

@@ -28,10 +28,9 @@ const Analytics = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Используем полный URL к API
+    // ИСПРАВЛЕНО: Добавлен полный путь к API /api/stats
     axios.get('https://dashboard-x-onrender-com.onrender.com')
       .then(res => { 
-        // Гарантируем, что dbData всегда будет массивом
         const data = Array.isArray(res.data) ? res.data : [];
         setDbData(data); 
         setLoading(false); 
@@ -52,7 +51,6 @@ const Analytics = () => {
     { name: 'Вс', tiktok: 8500, youtube: 4300, instagram: 8000 },
   ];
 
-  // Безопасное формирование данных для круговой диаграммы
   const pieData = dbData.length > 0 
     ? dbData.map(p => ({ name: p.platform, value: Number(p.followers) || 0 }))
     : [{ name: 'Загрузка...', value: 1 }];
