@@ -40,10 +40,17 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    axios.get('https://dashboard-x-onrender-com.onrender.com/api/social-stats')
+    // Используем полный URL с /api/stats
+    axios.get('https://dashboard-x-onrender-com.onrender.com')
     .then(res => { 
-      setStats(res.data || []); setLoading(false); 
-    }).catch(() => setLoading(false));
+      // Проверяем, что данные пришли массивом
+      setStats(Array.isArray(res.data) ? res.data : []); 
+      setLoading(false); 
+    })
+    .catch((err) => {
+      console.error("Dashboard Load Error:", err);
+      setLoading(false);
+    });
   }, []);
 
   if (loading) return (
@@ -92,7 +99,6 @@ const Dashboard = () => {
               </div>
             </div>
             <div className="relative z-10 ml-4"><GrowthOrbit value={p.growth || 0} /></div>
-            {/* Световой градиент внутри карточки при наведении */}
             <div className="absolute inset-0 bg-gradient-to-br from-[#C026D3]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
           </motion.div>
         ))}
@@ -139,11 +145,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-
-
-
-
-
-
-
-
