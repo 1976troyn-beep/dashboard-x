@@ -8,6 +8,7 @@ import { Layers, Target, Activity, Loader2, BarChart3 } from 'lucide-react';
 import axios from 'axios';
 
 const THEME_COLORS = ['#C026D3', '#8B5CF6', '#06B6D4'];
+
 const PulsingDot = (props) => {
   const { cx, cy, stroke } = props;
   if (!cx || !cy) return null;
@@ -27,9 +28,18 @@ const Analytics = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Используем полный URL к API
     axios.get('https://dashboard-x-onrender-com.onrender.com/api/social-stats')
-      .then(res => { setDbData(res.data || []); setLoading(false); })
-      .catch(() => setLoading(false));
+      .then(res => { 
+        // Гарантируем, что dbData всегда будет массивом
+        const data = Array.isArray(res.data) ? res.data : [];
+        setDbData(data); 
+        setLoading(false); 
+      })
+      .catch((err) => { 
+        console.error("Analytics Load Error:", err);
+        setLoading(false); 
+      });
   }, []);
 
   const timelineData = [
@@ -42,13 +52,17 @@ const Analytics = () => {
     { name: 'Вс', tiktok: 8500, youtube: 4300, instagram: 8000 },
   ];
 
-  const pieData = dbData.map(p => ({ name: p.platform, value: Number(p.followers) }));
+  // Безопасное формирование данных для круговой диаграммы
+  const pieData = dbData.length > 0 
+    ? dbData.map(p => ({ name: p.platform, value: Number(p.followers) || 0 }))
+    : [{ name: 'Загрузка...', value: 1 }];
 
   if (loading) return (
     <div className="h-[60vh] flex items-center justify-center">
       <Loader2 className="animate-spin text-[#C026D3]" size={32} />
     </div>
   );
+
   return (
     <div className="space-y-6 pb-10 max-w-[1300px] mx-auto text-white px-4"> 
       <div className="flex flex-col mb-10">
@@ -56,6 +70,7 @@ const Analytics = () => {
           DATA <span className="text-[#C026D3] drop-shadow-[0_0_20px_rgba(192,38,211,0.4)]">INTELLIGENCE</span>
         </h1>
       </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
         <div className="lg:col-span-8 bg-white/[0.02] backdrop-blur-3xl border border-white/10 p-8 rounded-[2.5rem] shadow-2xl relative overflow-hidden">
           <h3 className="text-[10px] font-black uppercase italic tracking-[0.3em] text-gray-500 mb-8 flex items-center gap-2">
@@ -75,6 +90,7 @@ const Analytics = () => {
             </ResponsiveContainer>
           </div>
         </div>
+
         <div className="lg:col-span-4 bg-white/[0.01] backdrop-blur-md border border-white/10 p-8 rounded-[2.5rem] flex flex-col items-center shadow-2xl">
           <h3 className="text-[10px] font-black uppercase italic tracking-[0.3em] text-gray-500 self-start mb-8 text-left">Platform Share</h3>
           <div className="h-[220px] w-full relative">
@@ -102,6 +118,7 @@ const Analytics = () => {
           </div>
         </div>
       </div>
+
       <div className="bg-white/[0.02] backdrop-blur-3xl border border-white/10 p-8 rounded-[2.5rem] shadow-2xl">
         <h3 className="text-[10px] font-black uppercase italic tracking-[0.2em] text-gray-500 mb-8 flex items-center gap-2">
           <BarChart3 size={14} className="text-[#06B6D4]" /> Global Efficiency Node
@@ -128,12 +145,8 @@ const Analytics = () => {
            </div>
         </div>
       </div>
-
     </div>
   );
 };
 
 export default Analytics;
-
-
-
