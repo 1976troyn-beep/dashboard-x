@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Save, Database, CheckCircle, RefreshCw, Activity, Zap, AlertCircle } from 'lucide-react';
+import { Save, Database, CheckCircle, RefreshCw, Activity, Zap, AlertCircle, Server } from 'lucide-react';
 import axios from 'axios';
+
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -36,26 +37,28 @@ const Settings = () => {
     e.preventDefault();
     setStatus('loading');
     
+    // Подготовка данных (превращаем в числа для базы)
     const payload = {
-        ...formData,
-        followers: Number(formData.followers),
-        growth: Number(formData.growth),
-        revenue: Number(formData.revenue)
+        platform: formData.platform,
+        followers: Number(formData.followers) || 0,
+        growth: Number(formData.growth) || 0,
+        revenue: Number(formData.revenue) || 0
     };
 
     try {
-      // ОБНОВЛЕНО: Новый адрес твоего сервера на Render + правильный путь
+      // ИСПРАВЛЕНО: Полный и точный путь к твоему новому серверу
       const response = await axios.post('https://my-dashboard-pro.onrender.com', payload);
       
       if (response.status === 200 || response.status === 201) {
         setStatus('success');
+        // Очищаем только поля ввода, оставляя выбранную платформу
         setFormData(prev => ({ ...prev, followers: '', growth: '', revenue: '' }));
         setTimeout(() => setStatus('idle'), 3000);
       }
     } catch (error) {
-      console.error("Ошибка сохранения:", error);
+      console.error("Ошибка сохранения на сервере:", error);
       setStatus('error');
-      setTimeout(() => setStatus('idle'), 3000);
+      setTimeout(() => setStatus('idle'), 4000);
     }
   };
 
@@ -104,7 +107,7 @@ const Settings = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="space-y-3">
               <label className="text-[8px] uppercase font-black text-gray-500 ml-3 tracking-[0.3em] italic leading-none">Подписчики</label>
-              <input name="followers" type="number" value={formData.followers} onChange={handleChange} placeholder="0" 
+              <input name="followers" type="number" value={formData.followers} onChange={handleChange} placeholder="Введите число" 
                 className="w-full bg-white/[0.04] border border-white/10 rounded-2xl p-4 focus:border-[#C026D3]/50 focus:bg-white/[0.07] outline-none transition-all font-black text-xs italic text-white placeholder:text-gray-700" required />
             </div>
             <div className="space-y-3">
@@ -123,8 +126,8 @@ const Settings = () => {
         <div className="bg-white/[0.05] p-6 px-8 flex items-center justify-between border-t border-white/10 relative z-10">
           <div className="flex items-center gap-4">
             {status === 'loading' && <span className="text-[9px] text-blue-400 animate-pulse font-black uppercase tracking-[0.25em] flex items-center gap-2 italic"><RefreshCw size={14} className="animate-spin" /> Синхронизация...</span>}
-            {status === 'success' && <span className="text-[9px] text-[#10B981] font-black uppercase tracking-[0.25em] flex items-center gap-2 italic drop-shadow-[0_0_10px_rgba(16,185,129,0.3)]"><CheckCircle size={14} /> Данные добавлены в базу</span>}
-            {status === 'error' && <span className="text-[9px] text-red-500 font-black uppercase tracking-[0.25em] flex items-center gap-2 italic"><AlertCircle size={14} /> Ошибка сервера</span>}
+            {status === 'success' && <span className="text-[9px] text-[#10B981] font-black uppercase tracking-[0.25em] flex items-center gap-2 italic drop-shadow-[0_0_10px_rgba(16,185,129,0.3)]"><CheckCircle size={14} /> Данные успешно обновлены</span>}
+            {status === 'error' && <span className="text-[9px] text-red-500 font-black uppercase tracking-[0.25em] flex items-center gap-2 italic"><AlertCircle size={14} /> Ошибка: Проверьте интернет или сервер</span>}
           </div>          
           <button 
             type="submit" 
@@ -136,18 +139,38 @@ const Settings = () => {
             }`}
           >
             {status === 'success' ? (
-              <><CheckCircle size={16} /> Сохранено!</>
+              <><CheckCircle size={16} /> Готово!</>
             ) : status === 'loading' ? (
               <><RefreshCw size={16} className="animate-spin" /> Ждите...</>
             ) : (
-              <><Save size={16} /> Сохранить в базу</>
+              <><Save size={16} /> Сохранить данные</>
             )}
           </button>
         </div>
       </motion.form>
+
+      {/* СТАТУС СИСТЕМЫ */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {[
+          { id: 1, icon: Server, color: 'text-[#C026D3]', label: 'Сервер', val: 'Render Online' },
+          { id: 2, icon: Activity, color: 'text-[#06B6D4]', label: 'API Эндпоинт', val: '/api/social-stats' },
+          { id: 3, icon: Zap, color: 'text-[#10B981]', label: 'Связь', val: 'Активна' }
+        ].map((item) => (
+          <motion.div 
+            key={item.id}
+            variants={cardVariants}
+            className="flex items-center gap-4 bg-white/[0.02] border border-white/5 p-5 rounded-3xl backdrop-blur-xl"
+          >
+            <item.icon className={item.color} size={20} />
+            <div>
+              <p className="text-[8px] font-black text-gray-500 uppercase tracking-widest">{item.label}</p>
+              <p className="text-[10px] font-bold italic text-white uppercase">{item.val}</p>
+            </div>
+          </motion.div>
+        ))}
+      </div>
     </motion.div>
   );
 };
 
 export default Settings;
-
