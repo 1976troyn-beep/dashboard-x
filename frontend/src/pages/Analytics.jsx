@@ -6,7 +6,7 @@ import {
 import { Activity, BarChart3, Loader2 } from 'lucide-react';
 import axios from 'axios';
 
-const THEME_COLORS = ['#C026D3', '#8B5CF6', '#06B6D4'];
+const THEME_COLORS = ['#C026D3', '#8B5CF6', '#06B6D4', '#F43F5E', '#10B981'];
 
 const PulsingDot = (props) => {
   const { cx, cy, stroke } = props;
@@ -27,10 +27,8 @@ const Analytics = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Подключаемся к твоему живому серверу
     axios.get('https://my-dashboard-pro.onrender.co/api/statsm')
       .then(res => { 
-        // Превращаем данные в формат, понятный графикам (числа вместо строк)
         const sanitizedData = Array.isArray(res.data) ? res.data.map(item => ({
           ...item,
           followers: Number(item.followers) || 0,
@@ -45,10 +43,16 @@ const Analytics = () => {
       });
   }, []);
 
-  // Данные для круговой диаграммы (динамические)
-  const pieData = dbData.length > 0 
-    ? dbData.map(p => ({ name: p.platform, value: p.followers }))
-    : [{ name: 'No Data', value: 1 }];
+  const generateTimelineData = () => {
+    const days = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+    return days.map(day => {
+      const entry = { name: day };
+      dbData.forEach(p => {
+        entry[p.platform] = (p.followers / 10) + Math.random() * 500;
+      });
+      return entry;
+    });
+  };
 
   if (loading) {
     return (
@@ -57,6 +61,8 @@ const Analytics = () => {
       </div>
     );
   }
+
+  const timelineData = generateTimelineData();
 
   return (
     <div className="space-y-6 pb-10 max-w-[1300px] mx-auto text-white px-4"> 
@@ -67,36 +73,39 @@ const Analytics = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-        {/* LINE CHART */}
         <div className="lg:col-span-8 bg-white/[0.02] backdrop-blur-3xl border border-white/10 p-8 rounded-[2.5rem] shadow-2xl relative overflow-hidden">
           <h3 className="text-[10px] font-black uppercase italic tracking-[0.3em] text-gray-500 mb-8 flex items-center gap-2">
             <Activity size={14} className="text-[#C026D3]" /> Activity Trends Matrix
           </h3>
           <div className="h-[280px] w-full">
             <ResponsiveContainer width="100%" height="100%">
-              {/* Оставляем статику для тренда или можно заменить на данные с сервера */}
-              <LineChart data={[
-                { name: 'Пн', val: 4000 }, { name: 'Вт', val: 3000 }, { name: 'Ср', val: 5000 }, 
-                { name: 'Чт', val: 2780 }, { name: 'Пт', val: 4890 }, { name: 'Сб', val: 8000 }, { name: 'Вс', val: 8500 }
-              ]}>
+              <LineChart data={timelineData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#ffffff05" vertical={false} />
                 <XAxis dataKey="name" stroke="#4b5563" fontSize={10} tickLine={false} axisLine={false} dy={10} />
                 <Tooltip contentStyle={{ backgroundColor: '#000', border: '1px solid #C026D3', borderRadius: '12px' }} />                
-                <Line type="monotone" dataKey="val" stroke="#C026D3" strokeWidth={4} dot={<PulsingDot stroke="#C026D3" />} />
+                {dbData.map((p, i) => (
+                  <Line 
+                    key={p.platform}
+                    type="monotone" 
+                    dataKey={p.platform} 
+                    stroke={THEME_COLORS[i % THEME_COLORS.length]} 
+                    strokeWidth={4} 
+                    dot={<PulsingDot stroke={THEME_COLORS[i % THEME_COLORS.length]} />} 
+                  />
+                ))}
               </LineChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        {/* PIE CHART */}
         <div className="lg:col-span-4 bg-white/[0.01] backdrop-blur-md border border-white/10 p-8 rounded-[2.5rem] flex flex-col items-center shadow-2xl">
           <h3 className="text-[10px] font-black uppercase italic tracking-[0.3em] text-gray-500 self-start mb-8 text-left">Platform Share</h3>
           <div className="h-[220px] w-full relative">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
-                <Pie data={pieData} innerRadius={70} outerRadius={90} paddingAngle={8} dataKey="value" stroke="none">
-                  {pieData.map((entry, index) => (
-                    <Cell key={index} fill={THEME_COLORS[index % THEME_COLORS.length]} />
+                <Pie data={dbData} innerRadius={70} outerRadius={90} paddingAngle={8} dataKey="followers" nameKey="platform" stroke="none">
+                  {dbData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={THEME_COLORS[index % THEME_COLORS.length]} />
                   ))}
                 </Pie>
                 <Tooltip />
@@ -105,7 +114,7 @@ const Analytics = () => {
           </div>
           <div className="grid grid-cols-2 gap-x-6 gap-y-2 mt-8">
              {dbData.map((p, i) => (
-               <div key={i} className="flex items-center gap-2">
+               <div key={p.platform || i} className="flex items-center gap-2">
                  <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: THEME_COLORS[i % THEME_COLORS.length] }} />
                  <span className="text-[8px] font-black uppercase tracking-widest text-gray-500 italic">{p.platform}</span>
                </div>
@@ -114,7 +123,6 @@ const Analytics = () => {
         </div>
       </div>
 
-      {/* BAR CHART */}
       <div className="bg-white/[0.02] backdrop-blur-3xl border border-white/10 p-8 rounded-[2.5rem] shadow-2xl">
         <h3 className="text-[10px] font-black uppercase italic tracking-[0.2em] text-gray-500 mb-8 flex items-center gap-2">
           <BarChart3 size={14} className="text-[#06B6D4]" /> Global Efficiency Node
@@ -125,9 +133,9 @@ const Analytics = () => {
                  <CartesianGrid strokeDasharray="3 3" stroke="#ffffff05" vertical={false} />
                  <XAxis dataKey="platform" stroke="#4b5563" fontSize={10} tickLine={false} axisLine={false} />
                  <Tooltip cursor={{fill: 'rgba(255,255,255,0.02)'}} contentStyle={{ backgroundColor: '#000', border: '1px solid #06B6D4', borderRadius: '12px' }} />
-                 <Bar dataKey="followers" radius={ [10, 10, 0, 0] }>
+                 <Bar dataKey="followers" radius={[10, 10, 0, 0]}>
                     {dbData.map((entry, index) => (
-                      <Cell key={index} fill={THEME_COLORS[index % THEME_COLORS.length]} fillOpacity={0.8} />
+                      <Cell key={`bar-${index}`} fill={THEME_COLORS[index % THEME_COLORS.length]} fillOpacity={0.8} />
                     ))}
                  </Bar>
               </BarChart>
