@@ -1,81 +1,79 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Save, CheckCircle, RefreshCw, AlertCircle } from 'lucide-react';
 
 const Settings = () => {
-  const [formData, setFormData] = useState({
-    platform: 'YouTube',
-    followers: '',
-    growth: '',
-    revenue: '',
-  });
-  const [status, setStatus] = useState('idle');
+  const [followers, setFollowers] = useState('');
+  const [platform, setPlatform] = useState('YouTube');
+  const [loading, setLoading] = useState(false);
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault(); // Это критически важно!
-    console.log("Кнопка нажата! Отправляем данные..."); 
-    setStatus('loading');
-    
-    const payload = {
-        platform: formData.platform,
-        followers: Number(formData.followers) || 0,
-        growth: Number(formData.growth) || 0,
-        revenue: Number(formData.revenue) || 0
-    };
+  const sendData = async (e) => {
+    e.preventDefault(); // Останавливаем перезагрузку страницы
+    setLoading(true);
+    console.log("ПОПЫТКА ОТПРАВКИ НА СЕРВЕР...");
 
     try {
-      // ПРЯМОЙ ЗАПРОС БЕЗ СЛЭША В КОНЦЕ
-      const response = await axios.post('https://my-dashboard-pro.onrender.co', payload);
+      const res = await axios.post('https://my-dashboard-pro.onrender.co', {
+        platform: platform,
+        followers: Number(followers) || 0,
+        revenue: 0,
+        growth: 0
+      });
       
-      if (response.status === 200 || response.status === 201) {
-        console.log("УСПЕХ:", response.data);
-        setStatus('success');
-        setFormData(prev => ({ ...prev, followers: '', growth: '', revenue: '' }));
-        setTimeout(() => setStatus('idle'), 2000);
-      }
-    } catch (error) {
-      console.error("ОШИБКА ОТПРАВКИ:", error);
-      setStatus('error');
-      setTimeout(() => setStatus('idle'), 4000);
+      console.log("СЕРВЕР ОТВЕТИЛ:", res.data);
+      alert("ДАННЫЕ УСПЕШНО СОХРАНЕНЫ!");
+      setFollowers('');
+    } catch (err) {
+      console.error("ОШИБКА СВЯЗИ:", err);
+      alert("ОШИБКА: Сервер не отвечает или CORS блокирует запрос");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="p-8 text-white max-w-2xl mx-auto bg-white/5 rounded-3xl border border-white/10 mt-10">
-      <h1 className="text-3xl font-black uppercase italic mb-8 text-[#C026D3]">Node Config</h1>
+    <div style={{ padding: '50px', color: 'white', background: '#080A0F', minHeight: '100vh' }}>
+      <h1 style={{ fontSize: '32px', fontWeight: '900', marginBottom: '20px' }}>NODE CONFIG v2.0</h1>
       
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="flex gap-2 mb-6">
-          {['YouTube', 'Instagram', 'TikTok'].map((p) => (
-            <button key={p} type="button" onClick={() => setFormData({ ...formData, platform: p })}
-              className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all ${
-                formData.platform === p ? 'bg-[#C026D3] border-[#C026D3]' : 'bg-transparent border-white/10 text-gray-500'
-              }`}>{p}</button>
-          ))}
-        </div>
+      <form onSubmit={sendData} style={{ display: 'flex', flexDirection: 'column', gap: '20px', maxWidth: '400px' }}>
+        <select 
+          value={platform} 
+          onChange={(e) => setPlatform(e.target.value)}
+          style={{ padding: '15px', background: '#1A1D23', color: 'white', borderRadius: '12px', border: '1px solid #333' }}
+        >
+          <option value="YouTube">YouTube</option>
+          <option value="Instagram">Instagram</option>
+          <option value="TikTok">TikTok</option>
+        </select>
 
-        <div className="grid grid-cols-1 gap-6">
-          <input name="followers" type="number" value={formData.followers} onChange={handleChange} placeholder="Подписчики" required 
-            className="bg-white/5 border border-white/10 p-4 rounded-2xl outline-none focus:border-[#C026D3]" />
-          <input name="revenue" type="number" step="0.01" value={formData.revenue} onChange={handleChange} placeholder="Доход ($)" required 
-            className="bg-white/5 border border-white/10 p-4 rounded-2xl outline-none focus:border-[#C026D3]" />
-          <input name="growth" type="number" step="0.1" value={formData.growth} onChange={handleChange} placeholder="Рост (%)" required 
-            className="bg-white/5 border border-white/10 p-4 rounded-2xl outline-none focus:border-[#C026D3]" />
-        </div>
+        <input 
+          type="number" 
+          placeholder="Число подписчиков" 
+          value={followers}
+          onChange={(e) => setFollowers(e.target.value)}
+          required
+          style={{ padding: '15px', background: '#1A1D23', color: 'white', borderRadius: '12px', border: '1px solid #333' }}
+        />
 
-        <button type="submit" disabled={status === 'loading'}
-          className="w-full bg-[#C026D3] p-4 rounded-2xl font-black uppercase italic flex items-center justify-center gap-3 hover:scale-[1.02] active:scale-95 transition-all">
-          {status === 'loading' ? <RefreshCw className="animate-spin" /> : <Save />}
-          {status === 'loading' ? 'Синхронизация...' : 'Сохранить данные'}
+        <button 
+          type="submit" 
+          disabled={loading}
+          style={{ 
+            padding: '20px', 
+            background: '#C026D3', 
+            color: 'white', 
+            fontWeight: '900', 
+            borderRadius: '12px', 
+            cursor: 'pointer',
+            border: 'none'
+          }}
+        >
+          {loading ? 'СИНХРОНИЗАЦИЯ...' : 'СОХРАНИТЬ В ОБЛАКО'}
         </button>
-
-        {status === 'success' && <p className="text-green-500 text-center font-black uppercase text-[10px] animate-bounce">Данные в облаке!</p>}
-        {status === 'error' && <p className="text-red-500 text-center font-black uppercase text-[10px]">Ошибка соединения!</p>}
       </form>
+      
+      <p style={{ marginTop: '20px', fontSize: '10px', color: '#555' }}>
+        Status: {loading ? 'Sending...' : 'Ready'}
+      </p>
     </div>
   );
 };
