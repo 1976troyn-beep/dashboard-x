@@ -28,8 +28,7 @@ const Analytics = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // ОБНОВЛЕНО: Новый URL сервера и эндпоинт /api/stats
-    axios.get('https://my-dashboard-pro.onrender.com')
+    axios.get('https://my-dashboard-pro.onrender.co/api/statsm')
       .then(res => { 
         const data = Array.isArray(res.data) ? res.data : [];
         setDbData(data); 
@@ -50,7 +49,6 @@ const Analytics = () => {
     { name: 'Сб', tiktok: 2390, youtube: 3800, instagram: 7100 },
     { name: 'Вс', tiktok: 8500, youtube: 4300, instagram: 8000 },
   ];
-
   const pieData = dbData.length > 0 
     ? dbData.map(p => ({ name: p.platform, value: Number(p.followers) || 0 }))
     : [{ name: 'Загрузка...', value: 1 }];

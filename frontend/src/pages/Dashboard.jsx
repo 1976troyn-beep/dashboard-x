@@ -40,7 +40,6 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // ОБНОВЛЕНО: Новый URL сервера и эндпоинт /api/stats
     axios.get('https://my-dashboard-pro.onrender.com/api/stats')
     .then(res => { 
       setStats(Array.isArray(res.data) ? res.data : []); 
@@ -55,7 +54,6 @@ const Dashboard = () => {
   if (loading) return (
     <div className="h-[60vh] flex flex-col items-center justify-center gap-4 text-white">
       <Loader2 className="animate-spin text-[#C026D3]" size={32} />
-      <p className="text-[10px] font-black uppercase tracking-[0.6em] opacity-50 italic">System Loading...</p>
     </div>
   );
 

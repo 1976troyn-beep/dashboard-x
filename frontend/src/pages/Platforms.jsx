@@ -49,11 +49,9 @@ const cardVariants = {
 const Platforms = () => {
   const [platforms, setPlatforms] = useState([])
   const [loading, setLoading] = useState(true)
-
   useEffect(() => {
     getSocialStats()
       .then(res => {
-        // Проверяем данные и из res.data, и из самого res (зависит от того, как вернет axios)
         const data = res?.data || res;
         setPlatforms(Array.isArray(data) ? data : [])
         setLoading(false)

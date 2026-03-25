@@ -4,11 +4,9 @@ const app = express();
 
 const PORT = process.env.PORT || 10000; 
 
-// Улучшенный CORS — разрешаем всё и всем
 app.use(cors());
 app.use(express.json());
 
-// Логгер — будет писать в консоль каждый запрос!
 app.use((req, res, next) => {
     console.log(`${new Date().toISOString()} - ${req.method} request to ${req.url}`);
     next();
@@ -41,7 +39,6 @@ app.get('/api/stats', (req, res) => res.json(mockData));
 
 app.get('/', (req, res) => res.send('Бэкенд my-dashboard-pro активен!'));
 
-// Важно: слушаем на 0.0.0.0
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`Сервер запущен на порту ${PORT}`);
 });

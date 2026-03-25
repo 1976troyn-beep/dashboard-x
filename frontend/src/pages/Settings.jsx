@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 import { Save, Database, CheckCircle, RefreshCw, Activity, Zap, AlertCircle, Server } from 'lucide-react';
 import axios from 'axios';
 
-
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
@@ -36,8 +35,6 @@ const Settings = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setStatus('loading');
-    
-    // Подготовка данных (превращаем в числа для базы)
     const payload = {
         platform: formData.platform,
         followers: Number(formData.followers) || 0,
@@ -46,12 +43,9 @@ const Settings = () => {
     };
 
     try {
-      // ИСПРАВЛЕНО: Полный и точный путь к твоему новому серверу
       const response = await axios.post('https://my-dashboard-pro.onrender.com/api/social-stats', payload);
-      
       if (response.status === 200 || response.status === 201) {
         setStatus('success');
-        // Очищаем только поля ввода, оставляя выбранную платформу
         setFormData(prev => ({ ...prev, followers: '', growth: '', revenue: '' }));
         setTimeout(() => setStatus('idle'), 3000);
       }
@@ -148,8 +142,6 @@ const Settings = () => {
           </button>
         </div>
       </motion.form>
-
-      {/* СТАТУС СИСТЕМЫ */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {[
           { id: 1, icon: Server, color: 'text-[#C026D3]', label: 'Сервер', val: 'Render Online' },
