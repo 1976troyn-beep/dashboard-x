@@ -41,7 +41,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     // ОБНОВЛЕНО: Новый URL сервера и эндпоинт /api/stats
-    axios.get('https://my-dashboard-pro.onrender.com')
+    axios.get('https://my-dashboard-pro.onrender.com/api/stats')
     .then(res => { 
       setStats(Array.isArray(res.data) ? res.data : []); 
       setLoading(false); 
