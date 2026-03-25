@@ -28,8 +28,8 @@ const Analytics = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // ИСПРАВЛЕНО: Добавлен полный путь к API /api/stats
-    axios.get('https://dashboard-x-onrender-com.onrender.com')
+    // ОБНОВЛЕНО: Новый URL сервера и эндпоинт /api/stats
+    axios.get('https://my-dashboard-pro.onrender.com')
       .then(res => { 
         const data = Array.isArray(res.data) ? res.data : [];
         setDbData(data); 
@@ -148,3 +148,4 @@ const Analytics = () => {
 };
 
 export default Analytics;
+

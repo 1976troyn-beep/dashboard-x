@@ -36,7 +36,6 @@ const Settings = () => {
     e.preventDefault();
     setStatus('loading');
     
-    // Преобразуем данные в числа для корректной работы графиков
     const payload = {
         ...formData,
         followers: Number(formData.followers),
@@ -45,10 +44,10 @@ const Settings = () => {
     };
 
     try {
-      // ИСПРАВЛЕНО: Правильный адрес твоего сервера на Render
-      const response = await axios.post('https://dashboard-x.onrender.com', payload);
+      // ОБНОВЛЕНО: Новый адрес твоего сервера на Render + правильный путь
+      const response = await axios.post('https://my-dashboard-pro.onrender.com', payload);
       
-      if (response.data.message === "OK" || response.status === 200) {
+      if (response.status === 200 || response.status === 201) {
         setStatus('success');
         setFormData(prev => ({ ...prev, followers: '', growth: '', revenue: '' }));
         setTimeout(() => setStatus('idle'), 3000);
@@ -146,32 +145,9 @@ const Settings = () => {
           </button>
         </div>
       </motion.form>
-
-      {/* НИЖНИЙ БЛОК: СТАТУС СИСТЕМЫ */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {[
-          { id: 1, icon: Database, color: 'text-[#C026D3]', label: 'База Данных', val: 'Облако Активно' },
-          { id: 2, icon: Activity, color: 'text-[#06B6D4]', label: 'Задержка', val: 'Отклик 12ms' },
-          { id: 3, icon: Zap, color: 'text-[#10B981]', label: 'Статус', val: 'Система готова' }
-        ].map((item) => (
-          <motion.div 
-            key={item.id}
-            variants={cardVariants}
-            whileHover={{ y: -5, backgroundColor: 'rgba(255,255,255,0.06)', borderColor: 'rgba(255,255,255,0.2)' }}
-            className="flex items-center gap-5 p-6 rounded-[2rem] bg-white/[0.02] backdrop-blur-2xl border border-white/5 border-t-white/10 transition-all duration-500 shadow-xl"
-          >
-             <div className="p-3 rounded-xl bg-white/5 border border-white/5">
-                <item.icon size={20} className={item.color} />
-             </div>
-             <div>
-                <p className="text-[8px] font-black uppercase tracking-[0.2em] text-gray-500 mb-1">{item.label}</p>
-                <p className="text-xs font-black text-white italic">{item.val}</p>
-             </div>
-          </motion.div>
-        ))}
-      </div>
     </motion.div>
   );
 };
 
 export default Settings;
+

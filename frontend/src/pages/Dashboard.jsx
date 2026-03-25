@@ -40,8 +40,8 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // ИСПРАВЛЕНО: Добавлен полный путь к данным /api/stats
-    axios.get('https://dashboard-x-onrender-com.onrender.com')
+    // ОБНОВЛЕНО: Новый URL сервера и эндпоинт /api/stats
+    axios.get('https://my-dashboard-pro.onrender.com')
     .then(res => { 
       setStats(Array.isArray(res.data) ? res.data : []); 
       setLoading(false); 
@@ -144,3 +144,4 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
