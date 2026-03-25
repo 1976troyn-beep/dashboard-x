@@ -4,7 +4,7 @@ import { Save, CheckCircle, RefreshCw, Activity, Zap, AlertCircle, Server } from
 import axios from 'axios';
 
 // Конфигурация для связи с Render (БЕЗ слеша в конце и с заголовками)
-const API_URL = 'https://my-dashboard-pro.onrender.co/api/statsm';
+const API_URL = 'https://my-dashboard-pro.onrender.co/api/statsm/';
 
 const Settings = () => {
   const [formData, setFormData] = useState({

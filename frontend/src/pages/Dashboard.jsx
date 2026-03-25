@@ -40,7 +40,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    axios.get('https://my-dashboard-pro.onrender.co/api/statsm')
+    axios.get('https://my-dashboard-pro.onrender.co/api/statsm/')
     .then(res => { 
       setStats(Array.isArray(res.data) ? res.data : []); 
       setLoading(false); 
