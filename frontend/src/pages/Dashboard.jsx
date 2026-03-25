@@ -51,12 +51,6 @@ const Dashboard = () => {
     });
   }, []);
 
-  if (loading) return (
-    <div className="h-[60vh] flex flex-col items-center justify-center gap-4 text-white">
-      <Loader2 className="animate-spin text-[#C026D3]" size={32} />
-    </div>
-  );
-
   return (
     <motion.div initial="hidden" animate="visible" className="space-y-5 pb-10 max-w-[1300px] mx-auto text-white px-2">
       

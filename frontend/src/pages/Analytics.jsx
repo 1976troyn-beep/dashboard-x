@@ -50,15 +50,11 @@ const Analytics = () => {
     { name: 'Вс', tiktok: 8500, youtube: 4300, instagram: 8000 },
   ];
   const pieData = dbData.length > 0 
-    ? dbData.map(p => ({ name: p.platform, value: Number(p.followers) || 0 }))
-    : [{ name: 'Загрузка...', value: 1 }];
+  ? dbData.map(p => ({ name: p.platform, value: Number(p.followers) || 0 }))
+  : [{ name: 'Загрузка...', value: 1 }];
 
-  if (loading) return (
-    <div className="h-[60vh] flex items-center justify-center">
-      <Loader2 className="animate-spin text-[#C026D3]" size={32} />
-    </div>
-  );
-
+  
+  
   return (
     <div className="space-y-6 pb-10 max-w-[1300px] mx-auto text-white px-4"> 
       <div className="flex flex-col mb-10">

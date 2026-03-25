@@ -71,13 +71,6 @@ const Platforms = () => {
     return styles[name] || styles['YouTube']
   }
 
-  if (loading) return (
-    <div className="h-[60vh] flex flex-col items-center justify-center gap-4">
-      <Loader2 className="animate-spin text-[#C026D3]" size={32} />
-      <p className="text-[10px] font-black uppercase tracking-[0.5em] text-white/50 italic">Syncing Assets...</p>
-    </div>
-  )
-
   return (
     <motion.div 
       variants={containerVariants}
