@@ -47,7 +47,7 @@ const Settings = () => {
 
     try {
       // ИСПРАВЛЕНО: Полный и точный путь к твоему новому серверу
-      const response = await axios.post('https://my-dashboard-pro.onrender.com', payload);
+      const response = await axios.post('https://my-dashboard-pro.onrender.com/api/social-stats', payload);
       
       if (response.status === 200 || response.status === 201) {
         setStatus('success');
