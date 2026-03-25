@@ -60,7 +60,7 @@ app.all('/api/statsm', (req, res) => {
     res.status(405).send('Method Not Allowed');
 });
 
-// Проверка жизни сервера
+
 app.get('/', (req, res) => res.send('SERVER IS ONLINE AND OPEN!'));
 
 app.listen(PORT, '0.0.0.0', () => {
