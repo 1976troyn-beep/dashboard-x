@@ -45,7 +45,7 @@ const Settings = () => {
 
     try {
       // ИСПРАВЛЕНО: URL теперь точно соответствует твоему бэкенду и эндпоинту аналитики
-      const response = await axios.post('https://my-dashboard-pro.onrender.co', payload);
+      const response = await axios.post('https://my-dashboard-pro.onrender.co/api/statsm', payload);
       
       if (response.status === 200 || response.status === 201) {
         setStatus('success');
