@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // ИСПРАВЛЕНО: Правильный домен .co
 const API = axios.create({
-  baseURL: 'https://my-dashboard-pro.onrender.com',
+  baseURL: 'https://my-dashboard-pro.onrender.co',
 });
 
 // ИСПРАВЛЕНО: Единый путь /api/statsm для получения и сохранения
