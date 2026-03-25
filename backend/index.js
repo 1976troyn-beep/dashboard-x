@@ -2,16 +2,17 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 
-const PORT = process.env.PORT || 5000; 
+const PORT = process.env.PORT || 10000; 
 
-// Разрешаем всё для Vercel, чтобы не было ошибок CORS
-app.use(cors({
-    origin: "*", 
-    methods: ["GET", "POST", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"]
-}));
-
+// Улучшенный CORS — разрешаем всё и всем
+app.use(cors());
 app.use(express.json());
+
+// Логгер — будет писать в консоль каждый запрос!
+app.use((req, res, next) => {
+    console.log(`${new Date().toISOString()} - ${req.method} request to ${req.url}`);
+    next();
+});
 
 let mockData = [
     { id: 1, platform: 'Instagram', followers: 1250, growth: 15.2, revenue: 450.5 },
@@ -19,10 +20,9 @@ let mockData = [
     { id: 3, platform: 'TikTok', followers: 5400, growth: 25.4, revenue: 300.2 }
 ];
 
-// ОБЯЗАТЕЛЬНО: Маршрут для сохранения данных
 app.post('/api/social-stats', (req, res) => {
     const { platform, followers, growth, revenue } = req.body;
-    console.log("Данные получены:", req.body);
+    console.log("Данные для сохранения:", req.body);
 
     const index = mockData.findIndex(item => item.platform === platform);
     if (index !== -1) {
@@ -32,16 +32,16 @@ app.post('/api/social-stats', (req, res) => {
             growth: Number(growth) || 0, 
             revenue: Number(revenue) || 0 
         };
-        return res.status(200).json({ message: "OK" });
+        return res.status(200).json({ message: "OK", data: mockData[index] });
     }
     res.status(404).json({ message: "Platform not found" });
 });
 
 app.get('/api/stats', (req, res) => res.json(mockData));
-app.get('/api/social-stats', (req, res) => res.json(mockData));
 
-app.get('/', (req, res) => res.send('Бэкенд активен!'));
+app.get('/', (req, res) => res.send('Бэкенд my-dashboard-pro активен!'));
 
+// Важно: слушаем на 0.0.0.0
 app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Сервер на порту ${PORT}`);
+    console.log(`Сервер запущен на порту ${PORT}`);
 });
