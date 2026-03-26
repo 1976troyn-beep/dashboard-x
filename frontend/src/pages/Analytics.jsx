@@ -30,7 +30,7 @@ const Analytics = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get('https://my-dashboard-pro.onrender.co/api/statsm');
+        const res = await axios.get('https://my-dashboard-pro.onrender.com/api/statsm');
         console.log("Raw Data from Server:", res.data); // Проверка в консоли F12
 
         const raw = Array.isArray(res.data) ? res.data : [];
