@@ -11,17 +11,14 @@ const Settings = () => {
   const [formData, setFormData] = useState(initialFormState);
   const [status, setStatus] = useState('idle');
 
-  // 1. АВТОЗАГРУЗКА: Получаем данные из базы при смене платформы
   useEffect(() => {
     const fetchCurrentPlatformData = async () => {
       setStatus('loading');
       try {
         const response = await getSocialStats();
-        // Ищем в массиве данных объект именно для текущей платформы (YouTube, Instagram и т.д.)
         const currentData = response.data.find(item => item.platform === formData.platform);
         
         if (currentData) {
-          // Если данные в базе есть — заполняем ими форму
           setFormData({
             platform: currentData.platform,
             followers: currentData.followers || '',
@@ -29,7 +26,6 @@ const Settings = () => {
             revenue: currentData.revenue || ''
           });
         } else {
-          // Если данных для этой соцсети еще нет — сбрасываем поля в пустоту
           setFormData(prev => ({ ...initialFormState, platform: prev.platform }));
         }
         setStatus('idle');
@@ -41,25 +37,21 @@ const Settings = () => {
 
     fetchCurrentPlatformData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formData.platform]); // Магия происходит здесь: меняем вкладку — грузим данные
+  }, [formData.platform]); 
 
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setStatus('loading');
     try {
-      // Отправляем данные на твой Render сервер
       await updateStat(formData);
       setStatus('success');
-      // Через 2 секунды возвращаем статус в обычный режим
       setTimeout(() => setStatus('idle'), 2000);
     } catch (error) {
       console.error("Ошибка сохранения:", error);
       setStatus('error');
     }
   };
-
   return (
     <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-6 pb-10 max-w-[1300px] mx-auto text-white">
       <motion.div variants={cardVariants} className="flex flex-col mb-8 px-2">
@@ -77,7 +69,6 @@ const Settings = () => {
                 <button 
                   key={p} 
                   type="button" 
-                  // При клике просто меняем платформу, useEffect выше сам подтянет данные
                   onClick={() => setFormData(prev => ({ ...prev, platform: p }))}
                   className={`px-6 py-2.5 rounded-xl font-black uppercase text-[9px] transition-all border ${formData.platform === p ? 'bg-[#C026D3]/30 border-[#C026D3] text-white shadow-[0_0_20px_rgba(192,38,211,0.3)]' : 'bg-transparent border-transparent text-gray-500 hover:text-white'}`}>
                   {p}
@@ -85,8 +76,6 @@ const Settings = () => {
               ))}
             </div>
           </div>
-
-          {/* Поля ввода */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="space-y-3">
               <label className="text-[8px] uppercase font-black text-gray-500 ml-3 italic">Current Followers</label>
@@ -106,7 +95,6 @@ const Settings = () => {
           </div>
         </div>
 
-        {/* Футер формы со статусами */}
         <div className="bg-white/[0.05] p-6 px-8 flex items-center justify-between border-t border-white/10">
           <div className="flex items-center gap-4">
             {status === 'loading' && <span className="text-[9px] text-blue-400 animate-pulse font-black uppercase italic flex items-center gap-2"><RefreshCw size={14} className="animate-spin" /> Syncing with Cloud...</span>}

@@ -35,7 +35,6 @@ const Analytics = () => {
 
         const raw = Array.isArray(res.data) ? res.data : [];
         
-        // Маппинг данных: делаем их понятными для графиков
         const sanitized = raw.map(item => ({
           platform: item.platform || 'Unknown',
           followers: Number(item.followers) || Number(item.follower) || 0,
@@ -53,11 +52,9 @@ const Analytics = () => {
     fetchData();
   }, []);
 
-  // Создаем данные для линейного графика (имитация тренда)
   const timelineData = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'].map((day, idx) => {
     const point = { name: day };
     dbData.forEach(p => {
-      // Генерируем красивую кривую на основе реальных данных
       point[p.platform] = (p.followers / (1.5 + idx * 0.1)) + (Math.sin(idx) * 200);
     });
     return point;
@@ -87,7 +84,6 @@ const Analytics = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-        {/* ВЕРХНИЙ ГРАФИК (ТРЕНДЫ) */}
         <div className="lg:col-span-8 bg-white/[0.02] backdrop-blur-3xl border border-white/10 p-8 rounded-[2.5rem] shadow-2xl relative">
           <h3 className="text-[10px] font-black uppercase italic tracking-[0.3em] text-gray-500 mb-8 flex items-center gap-2">
             <Activity size={14} className="text-[#C026D3]" /> Activity Trends Matrix
@@ -114,7 +110,6 @@ const Analytics = () => {
           </div>
         </div>
 
-        {/* КРУГОВАЯ ДИАГРАММА */}
         <div className="lg:col-span-4 bg-white/[0.01] backdrop-blur-md border border-white/10 p-8 rounded-[2.5rem] flex flex-col items-center shadow-2xl">
           <h3 className="text-[10px] font-black uppercase italic tracking-[0.3em] text-gray-500 self-start mb-8">Platform Share</h3>
           <div className="h-[240px] w-full relative">
@@ -148,7 +143,6 @@ const Analytics = () => {
         </div>
       </div>
 
-      {/* НИЖНИЙ БАР-ЧАРТ */}
       <div className="bg-white/[0.02] backdrop-blur-3xl border border-white/10 p-8 rounded-[2.5rem] shadow-2xl">
         <h3 className="text-[10px] font-black uppercase italic tracking-[0.2em] text-gray-500 mb-8 flex items-center gap-2">
           <BarChart3 size={14} className="text-[#06B6D4]" /> Global Efficiency Node

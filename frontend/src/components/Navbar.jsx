@@ -47,5 +47,5 @@ const Navbar = ({ setIsOpen }) => {
 }
 
 export default Navbar
-
+ 
 
