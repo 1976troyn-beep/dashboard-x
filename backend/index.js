@@ -2,11 +2,12 @@ const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 10000;
 
-// 1. САМЫЙ МОЩНЫЙ CORS
+// 1. САМЫЙ МОЩНЫЙ CORS (Разрешаем всё явно)
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+    
     if (req.method === 'OPTIONS') {
         return res.status(200).end();
     }
@@ -21,30 +22,45 @@ let mockData = [
     { platform: 'TikTok', followers: 0, growth: 0, revenue: 0 }
 ];
 
-// 2. ПРИНИМАЕМ ЛЮБЫЕ ВАРИАНТЫ ПУТИ (со слэшем и без)
-app.all(['/api/statsm', '/api/statsm/'], (req, res) => {
+// 2. УНИВЕРСАЛЬНЫЙ МАРШРУТ (Слушает все варианты путей)
+app.all(['/api/stats', '/api/stats/', '/api/statsm', '/api/statsm/'], (req, res) => {
+    // Дублируем заголовок для надежности
+    res.header('Access-Control-Allow-Origin', '*');
+
     if (req.method === 'POST') {
         const { platform, followers, growth, revenue } = req.body;
+        console.log('--- Incoming Data ---', req.body);
+
         const index = mockData.findIndex(item => 
             (item.platform || "").toLowerCase() === (platform || "").toLowerCase()
         );
+        
         const updatedItem = { 
             platform: platform || 'Unknown', 
             followers: Number(followers) || 0, 
             growth: Number(growth) || 0, 
             revenue: Number(revenue) || 0 
         };
-        if (index !== -1) mockData[index] = updatedItem; else mockData.push(updatedItem);
+
+        if (index !== -1) {
+            mockData[index] = updatedItem;
+        } else {
+            mockData.push(updatedItem);
+        }
+        
         return res.status(200).json({ message: "OK", ...updatedItem });
     }
+    
+    // Если GET запрос - отдаем данные
     res.status(200).json(mockData);
 });
 
-app.get('/', (req, res) => res.send('SYSTEM ONLINE: VERSION 4.0'));
+app.get('/', (req, res) => res.send('SERVER LIVE: VERSION 5.0 FINAL'));
 
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server is blasting on port ${PORT}`);
 });
+
 
 
 
