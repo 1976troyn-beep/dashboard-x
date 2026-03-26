@@ -3,22 +3,20 @@ const app = express();
 
 const PORT = process.env.PORT || 10000; 
 
-// 1. БРОНЕБОЙНЫЙ CORS (БЕЗ внешней библиотеки, только прямой контроль)
+// 1. БРОНЕБОЙНЫЙ CORS (СТРОГО В САМОМ НАЧАЛЕ)
 app.use((req, res, next) => {
-    // Разрешаем доступ абсолютно всем (Vercel, localhost и т.д.)
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
     
-    // МГНОВЕННЫЙ ОТВЕТ НА ПРОВЕРКУ БРАУЗЕРА (OPTIONS)
-    // Именно здесь браузер "зависает" в ошибку, если не получит 200 OK
+    // Ответ на предварительную проверку (OPTIONS)
     if (req.method === 'OPTIONS') {
-        return res.status(200).json({});
+        return res.status(200).end();
     }
     next();
 });
 
-// 2. Настройка парсинга JSON (обязательно ПОСЛЕ заголовков CORS)
+// 2. ПАРСИНГ JSON
 app.use(express.json());
 
 let mockData = [
@@ -27,12 +25,10 @@ let mockData = [
     { platform: 'TikTok', followers: 0, growth: 0, revenue: 0 }
 ];
 
-// 3. УНИВЕРСАЛЬНЫЙ МАРШРУТ
-app.all(['/api/statsm', '/api/statsm/'], (req, res) => {
+// 3. МАРШРУТ (БЕЗ СЛЭША В КОНЦЕ!)
+app.all('/api/statsm', (req, res) => {
     if (req.method === 'POST') {
         const { platform, followers, growth, revenue } = req.body;
-        
-        // Логируем в консоль Render, чтобы видеть, что данные долетели
         console.log('--- Incoming Data ---', req.body);
 
         const index = mockData.findIndex(item => 
@@ -52,17 +48,16 @@ app.all(['/api/statsm', '/api/statsm/'], (req, res) => {
             mockData.push(updatedItem);
         }
         
-        // Ответ "OK" для фронтенда
-        return res.json({ message: "OK", ...updatedItem });
+        return res.status(200).json({ message: "OK", ...updatedItem });
     }
     
-    // Если это GET запрос - отдаем данные
-    res.json(mockData);
+    // Для GET запроса
+    res.status(200).json(mockData);
 });
 
-app.get('/', (req, res) => res.send('SYSTEM ONLINE: CORS BYPASSED'));
+app.get('/', (req, res) => res.send('SYSTEM ONLINE: VERSION 3.1'));
 
-// 4. ЗАПУСК
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server is blasting on port ${PORT}`);
 });
+
