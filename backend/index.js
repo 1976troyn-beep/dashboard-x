@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 10000;
 
-// 1. САМЫЙ МОЩНЫЙ CORS (Разрешаем всё явно)
+// 1. ЖЕЛЕЗОБЕТОННЫЙ CORS
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
@@ -22,14 +22,14 @@ let mockData = [
     { platform: 'TikTok', followers: 0, growth: 0, revenue: 0 }
 ];
 
-// 2. УНИВЕРСАЛЬНЫЙ МАРШРУТ (Слушает все варианты путей)
-app.all(['/api/stats', '/api/stats/', '/api/statsm', '/api/statsm/'], (req, res) => {
+// 2. МАРШРУТ С ОБЯЗАТЕЛЬНЫМ СЛЭШЕМ (чтобы избежать редиректа)
+app.all('/api/statsm/', (req, res) => {
     // Дублируем заголовок для надежности
     res.header('Access-Control-Allow-Origin', '*');
 
     if (req.method === 'POST') {
         const { platform, followers, growth, revenue } = req.body;
-        console.log('--- Incoming Data ---', req.body);
+        console.log('--- DATA RECEIVED ---', req.body);
 
         const index = mockData.findIndex(item => 
             (item.platform || "").toLowerCase() === (platform || "").toLowerCase()
@@ -51,15 +51,16 @@ app.all(['/api/stats', '/api/stats/', '/api/statsm', '/api/statsm/'], (req, res)
         return res.status(200).json({ message: "OK", ...updatedItem });
     }
     
-    // Если GET запрос - отдаем данные
+    // GET запрос
     res.status(200).json(mockData);
 });
 
-app.get('/', (req, res) => res.send('SERVER LIVE: VERSION 5.0 FINAL'));
+app.get('/', (req, res) => res.send('SERVER LIVE: NO REDIRECT VERSION'));
 
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server is blasting on port ${PORT}`);
 });
+
 
 
 
