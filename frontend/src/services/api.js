@@ -1,17 +1,18 @@
 import axios from 'axios';
 
+// ИСПРАВЛЕНО: Официальный домен .com и СТРОГО БЕЗ слэша в конце
 const API = axios.create({
-  // СТРОГО БЕЗ СЛЭША В КОНЦЕ
-  baseURL: 'https://my-dashboard-pro.onrender.co', 
+  baseURL: 'https://my-dashboard-pro.onrender.com', 
 });
 
-// ПУТИ БЕЗ СЛЭША В КОНЦЕ (самый стабильный вариант для Express 5)
+// ИСПРАВЛЕНО: Пути без лишних слэшей
 export const getSocialStats = () => API.get('/api/statsm');
 export const updateStat = (data) => API.post('/api/statsm', data);
 
 export default API;
 
 
+ 
  
 
 
