@@ -1,15 +1,16 @@
 import axios from 'axios';
 
 const API = axios.create({
-  // Это адрес твоего ЕДИНСТВЕННОГО живого сервера в Render
+  // СТРОГО БЕЗ СЛЭША В КОНЦЕ!
   baseURL: 'https://my-dashboard-pro.onrender.co', 
 });
 
-// Добавляем слэши в конце для стабильности
-export const getSocialStats = () => API.get('/api/statsm/');
-export const updateStat = (data) => API.post('/api/statsm/');
+// ПУТИ БЕЗ СЛЭША В КОНЦЕ (самый стабильный вариант)
+export const getSocialStats = () => API.get('/api/statsm');
+export const updateStat = (data) => API.post('/api/statsm', data);
 
 export default API;
+
 
 
  
